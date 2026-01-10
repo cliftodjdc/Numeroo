@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FR7JWMDQPJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FR7JWMDQPJ');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Boss</title>
+    <style>
+        :root { --primary: #6c5ce7; --secondary: #a29bfe; --success: #00b894; --error: #ff7675; --bg: #f8f9fd; --pink: #fd79a8; }
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; overflow-x: hidden; }
+        
+        .container { max-width: 450px; width: 100%; text-align: center; z-index: 10; padding-bottom: 20px; position: relative; }
+        h1 { color: var(--primary); margin-bottom: 5px; }
+        
+        .mistake-log-icon { position: absolute; top: 0; right: 0; font-size: 28px; filter: grayscale(100%); opacity: 0.4; cursor: pointer; transition: 0.3s; }
+        .mistake-log-icon:hover { opacity: 1; }
+
+        .stats-bar { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 24px; color: var(--primary); font-weight: bold; margin: 10px 0; background: white; padding: 10px 25px; border-radius: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); min-width: 80%; }
+        .trophy-collection { display: flex; gap: 5px; margin-left: 10px; border-left: 2px solid #eee; padding-left: 15px; }
+        .trophy { font-size: 24px; animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .difficulty-selector { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
+        .diff-btn { padding: 8px 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #dfe6e9; color: #636e72; transition: 0.2s; }
+        .diff-btn.active { background: var(--pink); color: white; transform: scale(1.05); }
+        
+        .table-selector-box { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: none; border: 2px dashed var(--secondary); }
+        .table-selector-box.visible { display: block; }
+        
+        /* Table selector input capped at 3 digits width-wise */
+        input { width: 70px; padding: 8px; font-size: 20px; text-align: center; border-radius: 8px; border: 2px solid var(--secondary); }
+
+        .mode-selector { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .mode-btn { padding: 10px 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: white; color: var(--primary); border: 2px solid var(--secondary); }
+        .mode-btn.active { background: var(--primary); color: white; }
+        
+        .card-container { perspective: 1000px; width: 320px; height: 160px; margin: 20px auto 40px auto; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 25px; border: 5px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 10px; box-sizing: border-box; }
+        .card-front { background: white; font-size: 38px; font-weight: bold; color: #2d3436; }
+        .card-back { background: var(--primary); color: white; transform: rotateY(180deg); text-align: center; }
+        
+        #result-text { font-size: 22px; margin-bottom: 5px; }
+        #answer-display { font-size: 50px; font-weight: bold; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .option-btn { padding: 18px; font-size: 24px; font-weight: bold; border: none; border-radius: 20px; cursor: pointer; background: white; box-shadow: 0 4px 0px #dfe6e9; border: 2px solid #dfe6e9; transition: 0.2s; }
+        .option-btn.correct { background: var(--success) !important; color: white; border-color: #55efc4; box-shadow: 0 4px 0px #00b894; }
+        .option-btn.wrong { background: var(--error) !important; color: white; border-color: #fab1a0; box-shadow: 0 4px 0px #d63031; }
+        
+        #mistakePage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; overflow-y: auto; }
+        .mistake-container { max-width: 450px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; }
+        .mistake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .mistake-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--error); font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .close-btn { background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
+        .reward-obj { position: fixed; font-size: 50px; z-index: 1000; pointer-events: none; top: -100px; }
+        @keyframes rain { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(360deg); } }
+        @keyframes pop-in { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainGame">
+    <div class="mistake-log-icon" onclick="toggleMistakes()">📋</div>
+    <h1>🚀 Math Boss!</h1>
+
+    <div class="difficulty-selector">
+        <button class="diff-btn" onclick="setDiff('rookie', this)">Rookie</button>
+        <button class="diff-btn active" onclick="setDiff('pro', this)">Pro</button>
+        <button class="diff-btn" onclick="setDiff('boss', this)">BOSS</button>
+    </div>
+
+    <div style="margin-bottom:10px;">
+        <button class="diff-btn active" id="btn-rand" onclick="setTableMode(false)">Random Mix</button>
+        <button class="diff-btn" id="btn-single" onclick="setTableMode(true)">Single Table</button>
+    </div>
+
+    <div id="table-box" class="table-selector-box">
+        Table: <input type="number" id="tableNum" value="7" min="1" max="999" oninput="if(value.length>3)value=value.slice(0,3)" onchange="newQuestion()">
+    </div>
+    
+    <div class="stats-bar">
+        <span>⭐ <span id="score">0</span></span>
+        <div class="trophy-collection" id="trophyRow"></div>
+    </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" onclick="setMathType('multiplication', this)">×</button>
+        <button class="mode-btn" onclick="setMathType('addition', this)">+</button>
+        <button class="mode-btn" onclick="setMathType('subtraction', this)">−</button>
+        <button class="mode-btn" onclick="setMathType('division', this)">÷</button>
+    </div>
+
+    <div class="card-container">
+        <div class="card" id="card">
+            <div class="card-face card-front" id="question">7 × 5</div>
+            <div class="card-face card-back">
+                <div id="result-text">🌟 AWESOME!</div>
+                <div id="answer-display">35</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="options-grid" id="options"></div>
+</div>
+
+<div id="mistakePage">
+    <div class="mistake-container">
+        <div class="mistake-header">
+            <h2 style="color: var(--primary); margin: 0;">Mistake Log</h2>
+            <button class="close-btn" onclick="toggleMistakes()">Back to Game</button>
+        </div>
+        <div id="mistakeList"></div>
+    </div>
+</div>
+
+<script>
+    let mathType = 'multiplication', difficulty = 'pro', isSingleTable = false;
+    let correctAnswer = 0, currentQText = "", score = 0, canClick = true;
+    const earnedRewards = new Set();
+    const mistakes = [];
+
+    function setDiff(val, btn) {
+        difficulty = val;
+        document.querySelectorAll('.difficulty-selector .diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        newQuestion();
+    }
+
+    function setTableMode(val) {
+        isSingleTable = val;
+        document.getElementById('table-box').classList.toggle('visible', val);
+        document.getElementById('btn-rand').classList.toggle('active', !val);
+        document.getElementById('btn-single').classList.toggle('active', val);
+        newQuestion();
+    }
+
+    function setMathType(type, btn) {
+        mathType = type;
+        document.querySelectorAll('.mode-selector .mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        newQuestion();
+    }
+
+    function toggleMistakes() {
+        const page = document.getElementById('mistakePage');
+        const list = document.getElementById('mistakeList');
+        list.innerHTML = mistakes.length ? '' : '<p>No mistakes yet!</p>';
+        mistakes.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'mistake-item';
+            div.innerHTML = `<b>${m.q}</b> = ${m.a} <br><small>You picked: ${m.wrong}</small>`;
+            list.appendChild(div);
+        });
+        page.style.display = page.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function newQuestion() {
+        const card = document.getElementById('card');
+        if(card.classList.contains('flipped')) {
+            card.classList.remove('flipped');
+            setTimeout(generateMath, 300);
+        } else {
+            generateMath();
+        }
+    }
+
+    function generateMath() {
+        canClick = true;
+        let min = 1, max = 12;
+        if(difficulty === 'rookie') { min = 1; max = 5; }
+        else if(difficulty === 'boss') { min = 13; max = 20; }
+        
+        let num1 = isSingleTable ? (parseInt(document.getElementById('tableNum').value) || 7) : 
+                   Math.floor(Math.random() * (max - min + 1)) + min;
+        
+        let res_val = Math.floor(Math.random() * (max - min + 1)) + min;
+
+        if (mathType === 'multiplication') {
+            currentQText = `${num1} × ${res_val}`;
+            correctAnswer = num1 * res_val;
+        } 
+        else if (mathType === 'addition') {
+            currentQText = `${num1} + ${res_val}`;
+            correctAnswer = num1 + res_val;
+        } 
+        else if (mathType === 'subtraction') {
+            currentQText = `${num1 + res_val} − ${num1}`;
+            correctAnswer = res_val;
+        } 
+        else if (mathType === 'division') {
+            currentQText = `${num1 * res_val} ÷ ${num1}`;
+            correctAnswer = res_val;
+        }
+
+        document.getElementById('question').innerText = currentQText;
+        document.getElementById('answer-display').innerText = correctAnswer;
+        generateOptions(correctAnswer);
+    }
+
+    function generateOptions(correct) {
+        const container = document.getElementById('options');
+        container.innerHTML = '';
+        let choices = [correct];
+        while (choices.length < 4) {
+            let offset = Math.floor(Math.random() * 10) + 1;
+            let wrong = Math.random() > 0.5 ? correct + offset : correct - offset;
+            if (wrong >= 0 && !choices.includes(wrong)) choices.push(wrong);
+        }
+        choices.sort(() => Math.random() - 0.5);
+        choices.forEach(val => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = val;
+            btn.onclick = () => checkAnswer(val, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, btn) {
+        if (!canClick) return;
+        canClick = false;
+        const resLabel = document.getElementById('result-text');
+        if (selected === correctAnswer) {
+            btn.classList.add('correct');
+            resLabel.innerHTML = "🌟 AWESOME!";
+            score++;
+            document.getElementById('score').innerText = score;
+            triggerRewards(score);
+        } else {
+            btn.classList.add('wrong');
+            resLabel.innerText = "Keep trying! It's:";
+            mistakes.push({q: currentQText, a: correctAnswer, wrong: selected});
+            document.querySelectorAll('.option-btn').forEach(b => {
+                if (parseInt(b.innerText) === correctAnswer) b.classList.add('correct');
+            });
+        }
+        document.getElementById('card').classList.add('flipped');
+        setTimeout(newQuestion, 2000);
+    }
+
+    function addToTrophyRow(emoji) {
+        if (!earnedRewards.has(emoji)) {
+            earnedRewards.add(emoji);
+            const row = document.getElementById('trophyRow');
+            const span = document.createElement('span');
+            span.className = 'trophy';
+            span.innerText = emoji;
+            row.appendChild(span);
+        }
+    }
+
+    function triggerRewards(s) {
+        const r = {10:'🍦', 20:'🍌', 30:'🍪', 40:'🍒', 50:'🚀', 60:'✨', 70:'🦄', 80:'🍕', 90:'👻', 100:'💯'};
+        if (r[s]) {
+            launchRain(r[s], s === 100 ? 80 : 40);
+            addToTrophyRow(r[s]);
+        }
+    }
+
+    function launchRain(emoji, count) {
+        for(let i=0; i<count; i++) {
+            const el = document.createElement('div');
+            el.className = 'reward-obj'; el.innerText = emoji;
+            el.style.left = Math.random() * 95 + 'vw';
+            el.style.animation = `rain ${Math.random()*2 + 2}s linear forwards`;
+            el.style.animationDelay = (Math.random() * 1.5) + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 6000);
+        }
+    }
+    generateMath();
+</script>
+
+</body>
+</html>
