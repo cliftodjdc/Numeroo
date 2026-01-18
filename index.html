@@ -12,29 +12,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Math Boss | Interactive Math Flashcards for Kids</title>
+    <title>Math Boss Flashcards | Free Interactive Math Games for Kids</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    
     <meta name="description" content="Master multiplication, addition, subtraction, and division with Math Boss. Free interactive flashcards with fun rewards, emoji prizes, and mistake tracking for students.">
-    <meta name="keywords" content="math boss, math flashcards, multiplication practice, math games for kids, free math tools, online flashcards, 3rd grade math, 4th grade math">
+    <meta name="keywords" content="math boss, math flashcards, multiplication practice, math games for kids, free math tools, online flashcards, 3rd grade math, 4th grade math, multiplication tables 1-12, timed math drills">
     <link rel="canonical" href="https://mathbossflashcards.com/" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Math Boss Flashcards",
+      "operatingSystem": "Web",
+      "applicationCategory": "EducationApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Free interactive math flashcards for kids to master multiplication tables 1-12, addition, subtraction, and division through gamified learning."
+    }
+    </script>
 
     <style>
         :root { --primary: #6c5ce7; --secondary: #a29bfe; --success: #00b894; --error: #ff7675; --bg: #f8f9fd; --pink: #fd79a8; }
-        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; overflow-x: hidden; width: 100%; box-sizing: border-box; }
         
         .container { max-width: 450px; width: 100%; text-align: center; z-index: 10; padding-bottom: 20px; position: relative; }
-        h1 { color: var(--primary); margin-bottom: 5px; }
         
-        .mistake-log-icon { position: absolute; top: 0; right: 0; font-size: 28px; filter: grayscale(100%); opacity: 0.4; cursor: pointer; transition: 0.3s; }
+        h1 { 
+            color: var(--primary); 
+            margin-top: 45px; 
+            margin-bottom: 10px; 
+            font-size: 7.5vw; 
+            white-space: nowrap; 
+            display: block;
+            width: 100%;
+            letter-spacing: -0.5px;
+        }
+        @media (min-width: 450px) { h1 { font-size: 34px; } }
+        
+        .mistake-log-icon { position: absolute; top: 0; right: 0; font-size: 28px; filter: grayscale(100%); opacity: 0.4; cursor: pointer; transition: 0.3s; z-index: 20; }
 
-        .stats-bar { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 24px; color: var(--primary); font-weight: bold; margin: 10px 0; background: white; padding: 10px 25px; border-radius: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); min-width: 80%; }
-        .trophy-collection { display: flex; gap: 5px; margin-left: 10px; border-left: 2px solid #eee; padding-left: 15px; }
-        .trophy { font-size: 24px; animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .bar-style { background: #fff; padding: 15px; border-radius: 15px; margin: 10px auto; width: 100%; box-sizing: border-box; }
+
+        .stats-bar { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 20px; color: var(--primary); font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border: 2px solid transparent; }
+
+        .separator { width: 2px; height: 24px; background-color: #eee; flex-shrink: 0; }
+        
+        .trophy-collection { display: flex; gap: 2px; justify-content: center; align-items: center; min-width: 0; flex-shrink: 1; }
+        .trophy { font-size: 24px; flex-shrink: 1; min-width: 0; animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         
         .difficulty-selector { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
         .diff-btn { padding: 8px 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #dfe6e9; color: #636e72; transition: 0.2s; }
         .diff-btn.active { background: var(--pink); color: white; transform: scale(1.05); }
         
-        .table-selector-box { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: none; border: 2px dashed var(--secondary); }
+        .table-selector-box { display: none; border: 2px dashed var(--secondary); font-size: 20px; }
         .table-selector-box.visible { display: block; }
         input { width: 70px; padding: 8px; font-size: 20px; text-align: center; border-radius: 8px; border: 2px solid var(--secondary); }
 
@@ -57,16 +92,30 @@
         .option-btn.correct { background: var(--success) !important; color: white; border-color: #55efc4; box-shadow: 0 4px 0px #00b894; }
         .option-btn.wrong { background: var(--error) !important; color: white; border-color: #fab1a0; box-shadow: 0 4px 0px #d63031; }
         
-        /* SEO Content Styles */
-        .seo-section { max-width: 800px; width: 100%; margin: 50px auto; padding: 20px; text-align: left; color: #444; line-height: 1.6; border-top: 1px solid #ddd; }
-        .seo-section h2 { color: var(--primary); margin-top: 30px; }
-        .seo-section p { margin-bottom: 15px; }
+        .seo-section { max-width: 800px; width: 100%; margin: 50px auto; padding: 20px; text-align: left; color: #444; line-height: 1.6; border-top: 1px solid #ddd; box-sizing: border-box; }
+        .seo-section h2 { color: var(--primary); margin-top: 30px; font-size: 1.5rem; }
+        .seo-section h3 { font-size: 1.2rem; }
+        .seo-section p, .seo-section li { margin-bottom: 15px; font-size: 1rem; }
 
-        #mistakePage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; overflow-y: auto; }
-        .mistake-container { max-width: 450px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; }
-        .mistake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .mistake-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--error); font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .close-btn { background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        /* Fixed Full-Page Containers for Mobile */
+        #mistakePage, #privacyPage, #termsPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; overflow-y: auto; box-sizing: border-box; }
+        .page-container { max-width: 450px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; text-align: left; box-sizing: border-box; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
+        .page-body { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.6; color: #444; box-sizing: border-box; }
+        .page-body h3 { color: var(--primary); margin-top: 0; }
+        .page-body ul { padding-left: 20px; margin-bottom: 0; }
+
+        /* Centered Footer */
+        .footer { width: 100%; max-width: 800px; margin: 40px auto; padding: 20px; text-align: center; border-top: 1px solid #ddd; font-size: 14px; color: #666; box-sizing: border-box; }
+        .footer a { color: var(--primary); text-decoration: none; margin: 0 5px; cursor: pointer; display: inline-block; }
+
+        #winPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 4000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
+        .win-trophy { font-size: 100px; margin-bottom: 20px; }
+        .win-text { font-size: 48px; font-weight: bold; margin-bottom: 40px; }
+        .play-again-btn { background: white; color: var(--primary); padding: 15px 40px; border: none; border-radius: 50px; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+
+        .mistake-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--error); font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #2d3436; }
+        .close-btn { background: var(--primary); color: white; padding: 10px 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
         
         .reward-obj { position: fixed; font-size: 50px; z-index: 1000; pointer-events: none; top: -100px; }
         @keyframes rain { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(360deg); } }
@@ -76,8 +125,8 @@
 <body>
 
 <div class="container" id="mainGame">
-    <div class="mistake-log-icon" onclick="toggleMistakes()">📋</div>
-    <h1>🚀 Math Boss!</h1>
+    <div class="mistake-log-icon" onclick="togglePage('mistakePage')" title="View Mistake Log" aria-label="Mistake Log">📋</div>
+    <h1>🚀 Math Boss Flashcards</h1>
 
     <div class="difficulty-selector">
         <button class="diff-btn" onclick="setDiff('rookie', this)">Rookie</button>
@@ -90,20 +139,21 @@
         <button class="diff-btn" id="btn-single" onclick="setTableMode(true)">Single Table</button>
     </div>
 
-    <div id="table-box" class="table-selector-box">
+    <div id="table-box" class="table-selector-box bar-style">
         Table: <input type="number" id="tableNum" value="7" min="1" max="999" oninput="if(value.length>3)value=value.slice(0,3)" onchange="newQuestion()">
     </div>
     
-    <div class="stats-bar">
-        <span>⭐ <span id="score">0</span></span>
+    <div class="stats-bar bar-style">
+        <span style="white-space: nowrap; flex-shrink: 0;" title="Total Stars Earned">⭐ <span id="score">0</span></span>
+        <div class="separator"></div>
         <div class="trophy-collection" id="trophyRow"></div>
     </div>
 
     <div class="mode-selector">
-        <button class="mode-btn active" onclick="setMathType('multiplication', this)">×</button>
-        <button class="mode-btn" onclick="setMathType('addition', this)">+</button>
-        <button class="mode-btn" onclick="setMathType('subtraction', this)">−</button>
-        <button class="mode-btn" onclick="setMathType('division', this)">÷</button>
+        <button class="mode-btn active" onclick="setMathType('multiplication', this)" aria-label="Multiplication Mode">×</button>
+        <button class="mode-btn" onclick="setMathType('addition', this)" aria-label="Addition Mode">+</button>
+        <button class="mode-btn" onclick="setMathType('subtraction', this)" aria-label="Subtraction Mode">−</button>
+        <button class="mode-btn" onclick="setMathType('division', this)" aria-label="Division Mode">÷</button>
     </div>
 
     <div class="card-container">
@@ -121,12 +171,12 @@
 
 <div class="seo-section">
     <h2>Master Math Facts with Math Boss Flashcards</h2>
-    <p>Welcome to <strong>Math Boss</strong>, the ultimate tool for students to master mental math. Our interactive math flashcards are designed to help children build fluency in multiplication, addition, subtraction, and division through a fun and gamified experience. Whether you are a 3rd grader learning multiplication tables or an older student perfecting division, Math Boss scales with your skills.</p>
+    <p>Welcome to <strong>Math Boss</strong>, the ultimate tool for students to master mental math and <strong>multiplication tables 1-12</strong>. Our interactive math flashcards are designed to help children build fluency in multiplication, addition, subtraction, and division through a fun and gamified experience. Whether you are a 3rd grader learning multiplication tables or an older student perfecting division, Math Boss scales with your skills.</p>
     
     <h3>Why Use Interactive Math Flashcards?</h3>
-    <p>Mental math is a fundamental skill for academic success. Research shows that gamified learning increases student engagement and retention. Math Boss uses a unique reward system where students earn emoji prizes—like ice cream, bananas, and unicorns—as they reach specific star milestones. This positive reinforcement makes practicing math feel like a game rather than a chore.</p>
+    <p>Mental math is a fundamental skill for academic success and <strong>Common Core math practice</strong>. Research shows that gamified learning increases student engagement and retention. Math Boss uses a unique reward system where students earn emoji prizes—like ice cream, bananas, and unicorns—as they reach specific star milestones. This positive reinforcement makes practicing math feel like a game rather than a chore.</p>
     
-    <h3>Features of Math Boss Flashcards</h3>
+    <h3>Free Multiplication and Division Flashcard Features</h3>
     <ul>
         <li><strong>Multi-Level Difficulty:</strong> Choose from Rookie, Pro, or BOSS mode to match your current learning level.</li>
         <li><strong>Focused Practice:</strong> Use the "Single Table" mode to master a specific number, such as your 7 or 8 times tables.</li>
@@ -135,20 +185,71 @@
     </ul>
 
     <h3>How to Improve Math Speed and Accuracy</h3>
-    <p>Consistency is key. By practicing with Math Boss for just 10 minutes a day, students can significantly improve their recall speed. The goal is to move from "calculating" an answer to "recalling" it automatically. Our tool is perfect for classroom warm-ups, homework help, or summer learning to prevent the "summer slide."</p>
+    <p>Consistency is key. By practicing with Math Boss for just 10 minutes a day of <strong>timed math drills</strong>, students can significantly improve their recall speed. The goal is to move from "calculating" an answer to "recalling" it automatically. Our tool is perfect for classroom warm-ups, homework help, or summer learning to prevent the "summer slide".</p>
 
     <h3>A Free Educational Resource for Teachers and Parents</h3>
     <p>Math Boss is a free, web-based educational application. No downloads are required, making it accessible on tablets, Chromebooks, and smartphones. Join thousands of students who have become a Math Boss today!</p>
 </div>
 
+<footer class="footer">
+    <p>&copy; 2026 Math Boss Flashcards. All Rights Reserved.</p>
+    <a onclick="togglePage('privacyPage')">Privacy Policy</a>
+    <a onclick="togglePage('termsPage')">Terms of Use</a>
+    <p>Contact: <a href="mailto:mathbossflashcards@gmail.com">mathbossflashcards@gmail.com</a></p>
+</footer>
+
 <div id="mistakePage">
-    <div class="mistake-container">
-        <div class="mistake-header">
+    <div class="page-container">
+        <div class="page-header">
             <h2 style="color: var(--primary); margin: 0;">Mistake Log</h2>
-            <button class="close-btn" onclick="toggleMistakes()">Back to Game</button>
+            <button class="close-btn" onclick="togglePage('mistakePage')">Back to Game</button>
         </div>
         <div id="mistakeList"></div>
     </div>
+</div>
+
+<div id="privacyPage">
+    <div class="page-container">
+        <div class="page-header">
+            <h2 style="color: var(--primary); margin: 0;">Privacy Policy</h2>
+            <button class="close-btn" onclick="togglePage('privacyPage')">Back to Game</button>
+        </div>
+        <div class="page-body">
+            <h3>Our Commitment</h3>
+            <p><strong>Last Updated: January 2026</strong></p>
+            <p>Math Boss Flashcards is committed to protecting the privacy of our young users.</p>
+            <ul>
+                <li><strong>No Personal Data:</strong> We do not collect names, addresses, or phone numbers.</li>
+                <li><strong>Google Analytics:</strong> We use anonymous data to improve our game.</li>
+                <li><strong>Local Storage:</strong> Progress is saved only on your device.</li>
+                <li><strong>Contact:</strong> mathbossflashcards@gmail.com</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="termsPage">
+    <div class="page-container">
+        <div class="page-header">
+            <h2 style="color: var(--primary); margin: 0;">Terms of Use</h2>
+            <button class="close-btn" onclick="togglePage('termsPage')">Back to Game</button>
+        </div>
+        <div class="page-body">
+            <h3>Rules for Playing</h3>
+            <ul>
+                <li><strong>Educational Use:</strong> This site is for learning purposes only.</li>
+                <li><strong>Supervision:</strong> Children should play with adult supervision.</li>
+                <li><strong>Updates:</strong> We may improve the game at any time.</li>
+                <li><strong>Ownership:</strong> Branding belongs to Math Boss Flashcards.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="winPage">
+    <div class="win-trophy">🏆</div>
+    <div class="win-text">You Won!</div>
+    <button class="play-again-btn" onclick="resetGame()">Play Again</button>
 </div>
 
 <script>
@@ -156,6 +257,24 @@
     let correctAnswer = 0, currentQText = "", score = 0, canClick = true;
     const earnedRewards = new Set();
     const mistakes = [];
+
+    function togglePage(id) {
+        const page = document.getElementById(id);
+        const isOpening = page.style.display !== 'block';
+        
+        if (id === 'mistakePage' && isOpening) {
+            const list = document.getElementById('mistakeList');
+            list.innerHTML = mistakes.length ? '' : '<p>No mistakes yet!</p>';
+            mistakes.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'mistake-item';
+                div.innerHTML = `<b>${m.q}</b> = ${m.a} <br><small>You picked: ${m.wrong}</small>`;
+                list.appendChild(div);
+            });
+        }
+        
+        page.style.display = isOpening ? 'block' : 'none';
+    }
 
     function setDiff(val, btn) {
         difficulty = val;
@@ -179,17 +298,14 @@
         newQuestion();
     }
 
-    function toggleMistakes() {
-        const page = document.getElementById('mistakePage');
-        const list = document.getElementById('mistakeList');
-        list.innerHTML = mistakes.length ? '' : '<p>No mistakes yet!</p>';
-        mistakes.forEach(m => {
-            const div = document.createElement('div');
-            div.className = 'mistake-item';
-            div.innerHTML = `<b>${m.q}</b> = ${m.a} <br><small>You picked: ${m.wrong}</small>`;
-            list.appendChild(div);
-        });
-        page.style.display = page.style.display === 'block' ? 'none' : 'block';
+    function resetGame() {
+        score = 0;
+        mistakes.length = 0;
+        earnedRewards.clear();
+        document.getElementById('score').innerText = '0';
+        document.getElementById('trophyRow').innerHTML = '';
+        document.getElementById('winPage').style.display = 'none';
+        newQuestion();
     }
 
     function newQuestion() {
@@ -273,7 +389,14 @@
             });
         }
         document.getElementById('card').classList.add('flipped');
-        setTimeout(newQuestion, 2000);
+        
+        if (score === 100 && selected === correctAnswer) {
+            setTimeout(() => {
+                document.getElementById('winPage').style.display = 'flex';
+            }, 3500);
+        } else {
+            setTimeout(newQuestion, 2000);
+        }
     }
 
     function addToTrophyRow(emoji) {
