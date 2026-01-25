@@ -73,15 +73,15 @@
         .table-selector-box.visible { display: block; }
         input { width: 70px; padding: 8px; font-size: 20px; text-align: center; border-radius: 8px; border: 2px solid var(--secondary); }
 
-        .mode-selector { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .mode-btn { padding: 10px 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: white; color: var(--primary); border: 2px solid var(--secondary); }
+        .mode-selector { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .mode-btn { padding: 10px 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; background: white; color: var(--primary); border: 2px solid var(--secondary); min-width: 45px; }
         .mode-btn.active { background: var(--primary); color: white; }
         
         .card-container { perspective: 1000px; width: 320px; height: 160px; margin: 20px auto 40px auto; }
         .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .card.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 25px; border: 5px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 10px; box-sizing: border-box; }
-        .card-front { background: white; font-size: 38px; font-weight: bold; color: #2d3436; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 25px; border: 5px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 15px; box-sizing: border-box; overflow: hidden; }
+        .card-front { background: white; font-size: 38px; font-weight: bold; color: #2d3436; text-align: center; line-height: 1.2; }
         .card-back { background: var(--primary); color: white; transform: rotateY(180deg); text-align: center; }
         
         #result-text { font-size: 22px; margin-bottom: 5px; }
@@ -152,6 +152,7 @@
         <button class="mode-btn" onclick="setMathType('addition', this)" aria-label="Addition Mode">+</button>
         <button class="mode-btn" onclick="setMathType('subtraction', this)" aria-label="Subtraction Mode">−</button>
         <button class="mode-btn" onclick="setMathType('division', this)" aria-label="Division Mode">÷</button>
+        <button class="mode-btn" onclick="setMathType('word', this)" aria-label="Word Problems">Word Problems</button>
     </div>
 
     <div class="card-container">
@@ -180,6 +181,7 @@
         <li><strong>Focused Practice:</strong> Use the "Single Table" mode to master a specific number, such as your 7 or 8 times tables.</li>
         <li><strong>Comprehensive Mistake Tracking:</strong> Our built-in Mistake Log allows parents and teachers to see exactly which problems a student is struggling with.</li>
         <li><strong>Emoji Rewards:</strong> From chocolate chip cookies to rocket ships, our rewards rain from the sky to celebrate student success!</li>
+        <li><strong>Interactive Word Problems:</strong> Practice real-world application of math skills with our built-in word problem generator.</li>
     </ul>
 
     <h3>How to Improve Math Speed and Accuracy</h3>
@@ -256,6 +258,38 @@
     const earnedRewards = new Set();
     const mistakes = [];
 
+    // Word Problem Content Library
+    const wordTemplates = {
+        addition: [
+            "If you have {n1} apples and buy {n2} more, how many do you have?",
+            "A bus has {n1} kids. {n2} more get on. How many kids are there?",
+            "You found {n1} shells and your friend found {n2}. What is the total?",
+            "There are {n1} red cars and {n2} blue cars. How many in all?",
+            "A baker made {n1} cakes and then {n2} more. How many cakes total?"
+        ],
+        subtraction: [
+            "You had {n1} cookies and ate {n2}. How many are left?",
+            "There are {n1} birds on a fence. {n2} fly away. How many remain?",
+            "You have ${n1} and spend ${n2}. How much do you have left?",
+            "A tree had {n1} leaves. {n2} fell off. How many are still on?",
+            "You have {n1} balloons and {n2} popped. How many are left?"
+        ],
+        multiplication: [
+            "There are {n1} boxes with {n2} toys in each. How many toys total?",
+            "A bug has {n1} legs. How many legs do {n2} bugs have?",
+            "You earn ${n1} per hour. How much do you make in {n2} hours?",
+            "A garden has {n1} rows of {n2} flowers. How many flowers total?",
+            "If you buy {n1} packs of stickers with {n2} in each, how many stickers?"
+        ],
+        division: [
+            "Split {n1} candies equally among {n2} friends. How many each?",
+            "A {n1}-inch rope is cut into {n2} equal pieces. How long is each?",
+            "You have {n1} stickers to put on {n2} pages. How many per page?",
+            "Share {n1} pizza slices among {n2} people. How many slices each?",
+            "Pack {n1} books into {n2} boxes equally. How many books per box?"
+        ]
+    };
+
     function togglePage(id) {
         const page = document.getElementById(id);
         const isOpening = page.style.display !== 'block';
@@ -322,31 +356,48 @@
         if(difficulty === 'rookie') { min = 1; max = 5; }
         else if(difficulty === 'boss') { min = 13; max = 20; }
         
-        let num1 = isSingleTable ? (parseInt(document.getElementById('tableNum').value) || 7) : 
+        let n1 = isSingleTable ? (parseInt(document.getElementById('tableNum').value) || 7) : 
                    Math.floor(Math.random() * (max - min + 1)) + min;
-        
-        let res_val = Math.floor(Math.random() * (max - min + 1)) + min;
+        let n2 = Math.floor(Math.random() * (max - min + 1)) + min;
 
-        if (mathType === 'multiplication') {
-            currentQText = `${num1} × ${res_val}`;
-            correctAnswer = num1 * res_val;
-        } 
-        else if (mathType === 'addition') {
-            currentQText = `${num1} + ${res_val}`;
-            correctAnswer = num1 + res_val;
-        } 
-        else if (mathType === 'subtraction') {
-            currentQText = `${num1 + res_val} − ${num1}`;
-            correctAnswer = res_val;
-        } 
-        else if (mathType === 'division') {
-            currentQText = `${num1 * res_val} ÷ ${num1}`;
-            correctAnswer = res_val;
+        let activeType = mathType;
+        if (mathType === 'word') {
+            const types = ['addition', 'subtraction', 'multiplication', 'division'];
+            activeType = types[Math.floor(Math.random() * types.length)];
         }
 
-        document.getElementById('question').innerText = currentQText;
+        if (activeType === 'multiplication') {
+            correctAnswer = n1 * n2;
+            currentQText = mathType === 'word' ? getWordProb('multiplication', n1, n2) : `${n1} × ${n2}`;
+        } 
+        else if (activeType === 'addition') {
+            correctAnswer = n1 + n2;
+            currentQText = mathType === 'word' ? getWordProb('addition', n1, n2) : `${n1} + ${n2}`;
+        } 
+        else if (activeType === 'subtraction') {
+            let big = n1 + n2;
+            correctAnswer = n2;
+            currentQText = mathType === 'word' ? getWordProb('subtraction', big, n1) : `${big} − ${n1}`;
+        } 
+        else if (activeType === 'division') {
+            let product = n1 * n2;
+            correctAnswer = n2;
+            currentQText = mathType === 'word' ? getWordProb('division', product, n1) : `${product} ÷ ${n1}`;
+        }
+
+        const qElement = document.getElementById('question');
+        // Reduce font size for long word problems
+        qElement.style.fontSize = currentQText.length > 20 ? '22px' : '38px';
+        qElement.innerText = currentQText;
+        
         document.getElementById('answer-display').innerText = correctAnswer;
         generateOptions(correctAnswer);
+    }
+
+    function getWordProb(type, v1, v2) {
+        const tpts = wordTemplates[type];
+        const str = tpts[Math.floor(Math.random() * tpts.length)];
+        return str.replace("{n1}", v1).replace("{n2}", v2);
     }
 
     function generateOptions(correct) {
@@ -354,7 +405,7 @@
         container.innerHTML = '';
         let choices = [correct];
         while (choices.length < 4) {
-            let offset = Math.floor(Math.random() * 10) + 1;
+            let offset = Math.floor(Math.random() * 5) + 1;
             let wrong = Math.random() > 0.5 ? correct + offset : correct - offset;
             if (wrong >= 0 && !choices.includes(wrong)) choices.push(wrong);
         }
