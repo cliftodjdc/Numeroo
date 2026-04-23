@@ -20,24 +20,9 @@
     <meta name="keywords" content="math flashcards, multiplication practice, math games for kids, free math tools, online flashcards, 3rd grade math, 4th grade math, multiplication tables 1-12, timed math drills">
     <link rel="canonical" href="https://freemathflashcards.com/" />
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Math Flashcards",
-      "operatingSystem": "Web",
-      "applicationCategory": "EducationApplication",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "description": "Free interactive math flashcards for kids to master multiplication tables 1-12, addition, subtraction, and division through gamified learning."
-    }
-    </script>
-
     <style>
         :root { --primary: #6c5ce7; --secondary: #a29bfe; --success: #00b894; --error: #ff7675; --bg: #f8f9fd; --pink: #fd79a8; }
+        * { box-sizing: border-box; }
         body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; min-height: 100vh; overflow-x: hidden; width: 100%; box-sizing: border-box; }
         
         .container { max-width: 450px; width: 100%; text-align: center; z-index: 10; padding-bottom: 20px; position: relative; }
@@ -54,8 +39,6 @@
         }
         @media (min-width: 450px) { h1 { font-size: 34px; } }
         
-        .mistake-log-icon { position: absolute; top: 0; right: 0; font-size: 28px; filter: grayscale(100%); opacity: 0.4; font-style: normal; cursor: pointer; transition: 0.3s; z-index: 20; }
-
         .bar-style { background: #fff; padding: 15px; border-radius: 15px; margin: 10px auto; width: 100%; box-sizing: border-box; }
 
         .stats-bar { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 20px; color: var(--primary); font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border: 2px solid transparent; }
@@ -80,39 +63,41 @@
         .card-container { perspective: 1000px; width: 320px; height: 160px; margin: 20px auto 40px auto; }
         .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .card.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 25px; border: 5px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 15px; box-sizing: border-box; overflow: hidden; }
-        .card-front { background: white; font-size: 38px; font-weight: bold; color: #2d3436; text-align: center; line-height: 1.2; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 25px; border: 5px solid var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 15px; box-sizing: border-box; overflow: hidden; background: white; }
+        .card-front { font-size: 38px; font-weight: bold; color: #2d3436; text-align: center; line-height: 1.2; }
         .card-back { background: var(--primary); color: white; transform: rotateY(180deg); text-align: center; }
         
         #result-text { font-size: 22px; margin-bottom: 5px; }
         #answer-display { font-size: 50px; font-weight: bold; }
         
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .option-btn { padding: 18px; font-size: 24px; font-weight: bold; border: none; border-radius: 20px; cursor: pointer; background: white; box-shadow: 0 4px 0px #dfe6e9; border: 2px solid #dfe6e9; transition: 0.2s; }
+        .option-btn { padding: 18px; font-size: 24px; font-weight: bold; border: none; border-radius: 20px; cursor: pointer; background: white; box-shadow: 0 4px 0px #dfe6e9; border: 2px solid #dfe6e9; transition: 0.2s; display: flex; align-items: center; justify-content: center; min-height: 70px; }
         .option-btn.correct { background: var(--success) !important; color: white; border-color: #55efc4; box-shadow: 0 4px 0px #00b894; }
         .option-btn.wrong { background: var(--error) !important; color: white; border-color: #fab1a0; box-shadow: 0 4px 0px #d63031; }
-        
-        .seo-section { max-width: 800px; width: 100%; margin: 50px auto; padding: 20px; text-align: left; color: #444; line-height: 1.6; border-top: 1px solid #ddd; box-sizing: border-box; }
-        .seo-section h2 { color: var(--primary); margin-top: 30px; font-size: 1.5rem; }
-        .seo-section h3 { font-size: 1.2rem; }
-        .seo-section p, .seo-section li { margin-bottom: 15px; font-size: 1rem; }
 
+        #question svg { display: block; margin: 0 auto; max-width: 100%; }
+        #question svg.visual-shape { max-height: 100px; width: auto; }
+        #question svg.number-line-img { max-height: 120px; width: 100%; margin-top: -10px; }
+
+        .text-fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-weight: bold; line-height: 1.1; }
+        .fraction-num { border-bottom: 2.5px solid currentColor; padding: 0 5px; }
+        
         #mistakePage, #privacyPage, #termsPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; overflow-y: auto; box-sizing: border-box; }
-        .page-container { max-width: 450px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; text-align: left; box-sizing: border-box; }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
-        .page-body { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.6; color: #444; box-sizing: border-box; }
+        .page-container { max-width: 450px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; text-align: left; box-sizing: border-box; align-items: center; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; width: 100%; }
+        .page-body { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.6; color: #444; box-sizing: border-box; width: 100%; }
         .page-body h3 { color: var(--primary); margin-top: 0; }
         .page-body ul { padding-left: 20px; margin-bottom: 0; }
 
         .footer { width: 100%; max-width: 800px; margin: 40px auto; padding: 20px; text-align: center; border-top: 1px solid #ddd; font-size: 14px; color: #666; box-sizing: border-box; }
-        .footer a { color: var(--primary); text-decoration: none; margin: 0 5px; cursor: pointer; display: inline-block; }
+        .footer a { color: var(--primary); text-decoration: none; margin: 0 8px; cursor: pointer; display: inline-block; font-weight: bold; }
 
         #winPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 4000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
         .win-trophy { font-size: 100px; margin-bottom: 20px; }
         .win-text { font-size: 48px; font-weight: bold; margin-bottom: 40px; }
         .play-again-btn { background: white; color: var(--primary); padding: 15px 40px; border: none; border-radius: 50px; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
-        .mistake-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--error); font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #2d3436; }
+        .mistake-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--error); font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #2d3436; width: 100%; }
         .close-btn { background: var(--primary); color: white; padding: 10px 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
         
         .reward-obj { position: fixed; font-size: 50px; z-index: 1000; pointer-events: none; top: -100px; }
@@ -123,8 +108,7 @@
 <body>
 
 <div class="container" id="mainGame">
-    <div class="mistake-log-icon" onclick="togglePage('mistakePage')" title="View Mistake Log" aria-label="Mistake Log">📋</div>
-    <h1>🚀 Math Flashcards</h1>
+    <h1>🚀 Math Flashcards 🚀</h1>
 
     <div class="difficulty-selector">
         <button class="diff-btn" onclick="setDiff('rookie', this)">Rookie</button>
@@ -132,7 +116,7 @@
         <button class="diff-btn" onclick="setDiff('boss', this)">BOSS</button>
     </div>
 
-    <div style="margin-bottom:10px;">
+    <div id="table-controls" style="margin-bottom:10px;">
         <button class="diff-btn active" id="btn-rand" onclick="setTableMode(false)">Random Mix</button>
         <button class="diff-btn" id="btn-single" onclick="setTableMode(true)">Single Table</button>
     </div>
@@ -148,11 +132,14 @@
     </div>
 
     <div class="mode-selector">
-        <button class="mode-btn active" onclick="setMathType('multiplication', this)" aria-label="Multiplication Mode">×</button>
-        <button class="mode-btn" onclick="setMathType('addition', this)" aria-label="Addition Mode">+</button>
-        <button class="mode-btn" onclick="setMathType('subtraction', this)" aria-label="Subtraction Mode">−</button>
-        <button class="mode-btn" onclick="setMathType('division', this)" aria-label="Division Mode">÷</button>
-        <button class="mode-btn" onclick="setMathType('word', this)" aria-label="Word Problems">Word Problems</button>
+        <button class="mode-btn active" onclick="setMathType('multiplication', this)">×</button>
+        <button class="mode-btn" onclick="setMathType('addition', this)">+</button>
+        <button class="mode-btn" onclick="setMathType('subtraction', this)">−</button>
+        <button class="mode-btn" onclick="setMathType('division', this)">÷</button>
+        <button class="mode-btn" onclick="setMathType('word', this)">Words</button>
+        <button class="mode-btn" onclick="setMathType('fractions', this)">¼</button>
+        <button class="mode-btn" onclick="setMathType('numberline', this)">N.L.</button>
+        <button class="mode-btn" onclick="setMathType('groups', this)">●●</button>
     </div>
 
     <div class="card-container">
@@ -168,33 +155,11 @@
     <div class="options-grid" id="options"></div>
 </div>
 
-<div class="seo-section">
-    <h2>Master Math Facts with Math Flashcards</h2>
-    <p>Welcome to <strong>Math Flashcards</strong>, the ultimate tool for students to master mental math and <strong>multiplication tables 1-12</strong>. Our interactive math flashcards are designed to help children build fluency in multiplication, addition, subtraction, and division through a fun and gamified experience. Whether you are a 3rd grader learning multiplication tables or an older student perfecting division, Math Flashcards scales with your skills.</p>
-    
-    <h3>Why Use Interactive Math Flashcards?</h3>
-    <p>Mental math is a fundamental skill for academic success and <strong>Common Core math practice</strong>. Research shows that gamified learning increases student engagement and retention. Math Flashcards uses a unique reward system where students earn emoji prizes—like ice cream, bananas, and unicorns—as they reach specific star milestones. This positive reinforcement makes practicing math feel like a game rather than a chore.</p>
-    
-    <h3>Free Multiplication and Division Flashcard Features</h3>
-    <ul>
-        <li><strong>Multi-Level Difficulty:</strong> Choose from Rookie, Pro, or BOSS mode to match your current learning level.</li>
-        <li><strong>Focused Practice:</strong> Use the "Single Table" mode to master a specific number, such as your 7 or 8 times tables.</li>
-        <li><strong>Comprehensive Mistake Tracking:</strong> Our built-in Mistake Log allows parents and teachers to see exactly which problems a student is struggling with.</li>
-        <li><strong>Emoji Rewards:</strong> From chocolate chip cookies to rocket ships, our rewards rain from the sky to celebrate student success!</li>
-        <li><strong>Interactive Word Problems:</strong> Practice real-world application of math skills with our built-in word problem generator.</li>
-    </ul>
-
-    <h3>How to Improve Math Speed and Accuracy</h3>
-    <p>Consistency is key. By practicing with Math Flashcards for just 10 minutes a day of <strong>timed math drills</strong>, students can significantly improve their recall speed. The goal is to move from "calculating" an answer to "recalling" it automatically. Our tool is perfect for classroom warm-ups, homework help, or summer learning to prevent the "summer slide".</p>
-
-    <h3>A Free Educational Resource for Teachers and Parents</h3>
-    <p>Math Flashcards is a free, web-based educational application. No downloads are required, making it accessible on tablets, Chromebooks, and smartphones. Join thousands of students who have become a Math Flashcards expert today!</p>
-</div>
-
 <footer class="footer">
     <p>&copy; 2026 Math Flashcards. All Rights Reserved.</p>
-    <a onclick="togglePage('privacyPage')">Privacy Policy</a>
-    <a onclick="togglePage('termsPage')">Terms of Use</a>
+    <a onclick="togglePage('privacyPage')">Privacy Policy</a> |
+    <a onclick="togglePage('termsPage')">Terms of Use</a> |
+    <a onclick="togglePage('mistakePage')">Mistake Log</a>
     <p>Contact: <a href="mailto:freemathflashcards@yahoo.com">freemathflashcards@yahoo.com</a></p>
 </footer>
 
@@ -217,12 +182,10 @@
         <div class="page-body">
             <h3>Our Commitment</h3>
             <p><strong>Last Updated: January 2026</strong></p>
-            <p>Math Flashcards is committed to protecting the privacy of our young users.</p>
             <ul>
-                <li><strong>No Personal Data:</strong> We do not collect names, addresses, or phone numbers.</li>
-                <li><strong>Google Analytics:</strong> We use anonymous data to improve our game.</li>
+                <li><strong>No Personal Data:</strong> We do not collect names or addresses.</li>
+                <li><strong>Google Analytics:</strong> We use anonymous data to improve.</li>
                 <li><strong>Local Storage:</strong> Progress is saved only on your device.</li>
-                <li><strong>Contact:</strong> freemathflashcards@yahoo.com</li>
             </ul>
         </div>
     </div>
@@ -237,9 +200,8 @@
         <div class="page-body">
             <h3>Rules for Playing</h3>
             <ul>
-                <li><strong>Educational Use:</strong> This site is for learning purposes only.</li>
+                <li><strong>Educational Use:</strong> This site is for learning only.</li>
                 <li><strong>Supervision:</strong> Children should play with adult supervision.</li>
-                <li><strong>Updates:</strong> We may improve the game at any time.</li>
                 <li><strong>Ownership:</strong> Branding belongs to Math Flashcards.</li>
             </ul>
         </div>
@@ -257,55 +219,25 @@
     let correctAnswer = 0, currentQText = "", score = 0, canClick = true;
     const earnedRewards = new Set();
     const mistakes = [];
+    let previousShape = "";
 
-    // Word Problem Content Library
-    const wordTemplates = {
-        addition: [
-            "If you have {n1} apples and buy {n2} more, how many do you have?",
-            "A bus has {n1} kids. {n2} more get on. How many kids are there?",
-            "You found {n1} shells and your friend found {n2}. What is the total?",
-            "There are {n1} red cars and {n2} blue cars. How many in all?",
-            "A baker made {n1} cakes and then {n2} more. How many cakes total?"
-        ],
-        subtraction: [
-            "You had {n1} cookies and ate {n2}. How many are left?",
-            "There are {n1} birds on a fence. {n2} fly away. How many remain?",
-            "You have ${n1} and spend ${n2}. How much do you have left?",
-            "A tree had {n1} leaves. {n2} fell off. How many are still on?",
-            "You have {n1} balloons and {n2} popped. How many are left?"
-        ],
-        multiplication: [
-            "There are {n1} boxes with {n2} toys in each. How many toys total?",
-            "A bug has {n1} legs. How many legs do {n2} bugs have?",
-            "You earn ${n1} per hour. How much do you make in {n2} hours?",
-            "A garden has {n1} rows of {n2} flowers. How many flowers total?",
-            "If you buy {n1} packs of stickers with {n2} in each, how many stickers?"
-        ],
-        division: [
-            "Split {n1} candies equally among {n2} friends. How many each?",
-            "A {n1}-inch rope is cut into {n2} equal pieces. How long is each?",
-            "You have {n1} stickers to put on {n2} pages. How many per page?",
-            "Share {n1} pizza slices among {n2} people. How many slices each?",
-            "Pack {n1} books into {n2} boxes equally. How many books per box?"
-        ]
-    };
+    const fractionLib = { denoms: [2, 3, 4, 5, 6, 8, 10, 12], rookie: [2, 3, 4], boss: [6, 8, 10, 12] };
+    const colorLib = ['#fdcb6e', '#00cec9', '#0984e3', '#e84393', '#fab1a0', '#55efc4', '#a29bfe', '#ff7675'];
 
     function togglePage(id) {
         const page = document.getElementById(id);
-        const isOpening = page.style.display !== 'block';
-        
+        const isOpening = page.style.display !== 'flex';
         if (id === 'mistakePage' && isOpening) {
             const list = document.getElementById('mistakeList');
             list.innerHTML = mistakes.length ? '' : '<p>No mistakes yet!</p>';
             mistakes.forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'mistake-item';
-                div.innerHTML = `<b>${m.q}</b> = ${m.a} <br><small>You picked: ${m.wrong}</small>`;
+                div.innerHTML = `<b>${m.q}</b>`;
                 list.appendChild(div);
             });
         }
-        
-        page.style.display = isOpening ? 'block' : 'none';
+        page.style.display = isOpening ? 'flex' : 'none';
     }
 
     function setDiff(val, btn) {
@@ -327,13 +259,17 @@
         mathType = type;
         document.querySelectorAll('.mode-selector .mode-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        // SINGLE TABLE BUTTON LOGIC: Hide if mode is words, fractions, numberline, or dots
+        const hideTables = ['word', 'fractions', 'numberline', 'groups'].includes(type);
+        document.getElementById('table-controls').style.display = hideTables ? 'none' : 'block';
+        document.getElementById('table-box').style.display = (hideTables || !isSingleTable) ? 'none' : 'block';
+        
         newQuestion();
     }
 
     function resetGame() {
-        score = 0;
-        mistakes.length = 0;
-        earnedRewards.clear();
+        score = 0; mistakes.length = 0; earnedRewards.clear();
         document.getElementById('score').innerText = '0';
         document.getElementById('trophyRow').innerHTML = '';
         document.getElementById('winPage').style.display = 'none';
@@ -350,136 +286,168 @@
         }
     }
 
+    function adjustFontSize(element) {
+        let fontSize = 38; element.style.fontSize = fontSize + "px";
+        while ((element.scrollHeight > element.offsetHeight || element.scrollWidth > element.offsetWidth) && fontSize > 16) {
+            fontSize--; element.style.fontSize = fontSize + "px";
+        }
+    }
+
     function generateMath() {
         canClick = true;
-        let min = 1, max = 12;
-        if(difficulty === 'rookie') { min = 1; max = 5; }
-        else if(difficulty === 'boss') { min = 13; max = 20; }
-        
-        let n1 = isSingleTable ? (parseInt(document.getElementById('tableNum').value) || 7) : 
-                   Math.floor(Math.random() * (max - min + 1)) + min;
-        let n2 = Math.floor(Math.random() * (max - min + 1)) + min;
+        const qArea = document.getElementById('question');
+        const aArea = document.getElementById('answer-display');
+        qArea.innerHTML = ""; qArea.innerText = ""; qArea.style.fontSize = "38px";
+        const grid = document.getElementById('options');
+        grid.style.gridTemplateColumns = '1fr 1fr';
 
-        let activeType = mathType;
-        if (mathType === 'word') {
-            const types = ['addition', 'subtraction', 'multiplication', 'division'];
-            activeType = types[Math.floor(Math.random() * types.length)];
+        if (mathType === 'fractions') {
+            let pool = (difficulty === 'rookie') ? fractionLib.rookie : (difficulty === 'boss') ? fractionLib.boss : fractionLib.denoms;
+            const D = pool[Math.floor(Math.random() * pool.length)];
+            const N = Math.floor(Math.random() * (D - 1)) + 1;
+            correctAnswer = {n: N, d: D};
+            let style = (previousShape === 'circle') ? 'bar' : 'circle'; previousShape = style;
+            qArea.innerHTML = generateSVG(N, D, style, colorLib[Math.floor(Math.random() * colorLib.length)]);
+            aArea.innerHTML = formatFrac(N, D); genFracOptions(N, D);
+        } else if (mathType === 'numberline') {
+            let pool = (difficulty === 'rookie') ? fractionLib.rookie : (difficulty === 'boss') ? fractionLib.boss : fractionLib.denoms;
+            const D = pool[Math.floor(Math.random() * pool.length)];
+            const N = Math.floor(Math.random() * (D - 1)) + 1;
+            correctAnswer = {n: N, d: D};
+            qArea.innerHTML = generateNumberLineSVG(N, D);
+            aArea.innerHTML = formatFrac(N, D); genFracOptions(N, D);
+        } else if (mathType === 'groups') {
+            let maxG = (difficulty === 'rookie') ? 3 : (difficulty === 'boss') ? 6 : 4;
+            let maxD = (difficulty === 'rookie') ? 4 : (difficulty === 'boss') ? 8 : 5;
+            let g = Math.floor(Math.random() * (maxG - 1)) + 2;
+            let d = Math.floor(Math.random() * (maxD - 1)) + 2;
+            correctAnswer = `${g} × ${d} = ${g * d}`;
+            // UPDATED TEXT FOR DOTS GAME
+            qArea.innerHTML = `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:5px;">${Array(g).fill(0).map(() => generateGroupSVG(d, 0.6)).join('')}</div><div style="font-size:22px;font-weight:bold;margin-top:10px;">Which equation does this represent?</div>`;
+            aArea.innerText = correctAnswer; genGroupOptions(correctAnswer);
+        } else {
+            let min = 1, max = 12;
+            if(difficulty === 'rookie') { min = 1; max = 5; }
+            else if(difficulty === 'boss') { min = 13; max = 20; }
+            let n1 = isSingleTable ? (parseInt(document.getElementById('tableNum').value) || 7) : Math.floor(Math.random() * (max - min + 1)) + min;
+            let n2 = Math.floor(Math.random() * (max - min + 1)) + min;
+            let op = mathType;
+            if (mathType === 'word') op = ['addition','subtraction','multiplication','division'][Math.floor(Math.random()*4)];
+            
+            if (op === 'multiplication') { correctAnswer = n1 * n2; currentQText = mathType==='word' ? `There are ${n1} boxes with ${n2} items. Total?` : `${n1} × ${n2}`; }
+            else if (op === 'addition') { correctAnswer = n1 + n2; currentQText = mathType==='word' ? `You have ${n1} apples and get ${n2} more. Total?` : `${n1} + ${n2}`; }
+            else if (op === 'subtraction') { let big = n1 + n2; correctAnswer = n2; currentQText = mathType==='word' ? `A baker made ${big} cakes and sold ${n1}. Left?` : `${big} − ${n1}`; }
+            else { let prod = n1 * n2; correctAnswer = n2; currentQText = mathType==='word' ? `Split ${prod} candies among ${n1} friends. Each?` : `${prod} ÷ ${n1}`; }
+            
+            qArea.innerText = currentQText; adjustFontSize(qArea);
+            aArea.innerText = correctAnswer; generateOptions(correctAnswer);
         }
-
-        if (activeType === 'multiplication') {
-            correctAnswer = n1 * n2;
-            currentQText = mathType === 'word' ? getWordProb('multiplication', n1, n2) : `${n1} × ${n2}`;
-        } 
-        else if (activeType === 'addition') {
-            correctAnswer = n1 + n2;
-            currentQText = mathType === 'word' ? getWordProb('addition', n1, n2) : `${n1} + ${n2}`;
-        } 
-        else if (activeType === 'subtraction') {
-            let big = n1 + n2;
-            correctAnswer = n2;
-            currentQText = mathType === 'word' ? getWordProb('subtraction', big, n1) : `${big} − ${n1}`;
-        } 
-        else if (activeType === 'division') {
-            let product = n1 * n2;
-            correctAnswer = n2;
-            currentQText = mathType === 'word' ? getWordProb('division', product, n1) : `${product} ÷ ${n1}`;
-        }
-
-        const qElement = document.getElementById('question');
-        // Reduce font size for long word problems
-        qElement.style.fontSize = currentQText.length > 20 ? '22px' : '38px';
-        qElement.innerText = currentQText;
-        
-        document.getElementById('answer-display').innerText = correctAnswer;
-        generateOptions(correctAnswer);
     }
 
-    function getWordProb(type, v1, v2) {
-        const tpts = wordTemplates[type];
-        const str = tpts[Math.floor(Math.random() * tpts.length)];
-        return str.replace("{n1}", v1).replace("{n2}", v2);
+    function generateGroupSVG(dots, scale) {
+        let cols = (dots > 4) ? 3 : (dots > 1) ? 2 : 1;
+        let rows = Math.ceil(dots / cols), spc = 18 * scale, rad = 6 * scale;
+        let gridW = (cols - 1) * spc, gridH = (rows - 1) * spc, boxW = (cols * spc) + 10, boxH = (rows * spc) + 10;
+        let startX = (boxW - gridW) / 2, startY = (boxH - gridH) / 2, dotsEl = "";
+        for (let i = 0; i < dots; i++) dotsEl += `<circle cx="${startX + (i % cols) * spc}" cy="${startY + Math.floor(i / cols) * spc}" r="${rad}" fill="#6c5ce7" />`;
+        return `<svg width="${boxW}" height="${boxH}" style="border:2px solid #ff7675;border-radius:5px;background:white;flex-shrink:0;">${dotsEl}</svg>`;
     }
+
+    function generateSVG(n, d, s, fill) {
+        let p = "", r = 40;
+        if(s === 'bar') {
+            let bw = 80/d; for(let i=0; i<d; i++) p += `<rect x="${10+i*bw}" y="10" width="${bw}" height="80" fill="${i<n?fill:'white'}" stroke="black" stroke-width="1.5"/>`;
+        } else {
+            for(let i=0; i<d; i++) {
+                let st = (i*360)/d, en = ((i+1)*360)/d;
+                let x1 = 50+r*Math.cos((st-90)*Math.PI/180), y1 = 50+r*Math.sin((st-90)*Math.PI/180);
+                let x2 = 50+r*Math.cos((en-90)*Math.PI/180), y2 = 50+r*Math.sin((en-90)*Math.PI/180);
+                p += `<path d="M50,50 L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z" fill="${i<n?fill:'white'}" stroke="black" stroke-width="1.5"/>`;
+            }
+        }
+        return `<svg viewBox="0 0 100 100" class="visual-shape">${p}</svg>`;
+    }
+
+    function generateNumberLineSVG(n, d) {
+        let p = 30, w = 340, seg = w/d, paths = `<line x1="${p}" y1="40" x2="${p+w}" y2="40" stroke="black" stroke-width="2"/>`;
+        for(let i=0; i<=d; i++) {
+            let x = p+i*seg; paths += `<line x1="${x}" y1="${32}" x2="${x}" y2="${48}" stroke="black" stroke-width="2"/>`;
+            if(i===0 || i===d) paths += `<text x="${x}" y="70" text-anchor="middle" font-size="18" font-weight="bold">${i===0?'0':'1'}</text>`;
+            else if(i===n) paths += `<rect x="${x-18}" y="52" width="36" height="36" fill="white" stroke="black" stroke-width="3"/>`;
+            else paths += `<foreignObject x="${x-15}" y="50" width="30" height="50"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px;font-weight:bold;text-align:center;">${i}<br><hr style="margin:1px;border:0;border-top:1px solid black;">${d}</div></foreignObject>`;
+        }
+        return `<svg viewBox="0 0 400 120" class="number-line-img">${paths}</svg>`;
+    }
+
+    function formatFrac(n, d) { return `<div class="text-fraction"><span class="fraction-num">${n}</span><span>${d}</span></div>`; }
 
     function generateOptions(correct) {
-        const container = document.getElementById('options');
-        container.innerHTML = '';
-        let choices = [correct];
-        while (choices.length < 4) {
-            let offset = Math.floor(Math.random() * 5) + 1;
-            let wrong = Math.random() > 0.5 ? correct + offset : correct - offset;
-            if (wrong >= 0 && !choices.includes(wrong)) choices.push(wrong);
+        const grid = document.getElementById('options'); grid.innerHTML = '';
+        let ch = [correct]; while(ch.length < 4) {
+            let w = correct + (Math.floor(Math.random()*10)-5); if(w>=0 && !ch.includes(w)) ch.push(w);
         }
-        choices.sort(() => Math.random() - 0.5);
-        choices.forEach(val => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = val;
-            btn.onclick = () => checkAnswer(val, btn);
-            container.appendChild(btn);
+        ch.sort(()=>Math.random()-0.5).forEach(val => {
+            const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = val;
+            btn.onclick = () => checkAnswer(val, btn); grid.appendChild(btn);
+        });
+    }
+
+    function genFracOptions(n, d) {
+        const grid = document.getElementById('options'); grid.innerHTML = '';
+        let ch = [`${n}/${d}`]; while(ch.length < 4) {
+            let wd = fractionLib.denoms[Math.floor(Math.random()*fractionLib.denoms.length)], wn = Math.floor(Math.random()*(wd-1))+1, opt = `${wn}/${wd}`;
+            if(!ch.includes(opt)) ch.push(opt);
+        }
+        ch.sort(()=>Math.random()-0.5).forEach(o => {
+            const btn = document.createElement('button'); btn.className = 'option-btn';
+            const pts = o.split('/'); btn.innerHTML = formatFrac(pts[0], pts[1]);
+            btn.onclick = () => checkAnswer({n:parseInt(pts[0]), d:parseInt(pts[1])}, btn); grid.appendChild(btn);
+        });
+    }
+
+    function genGroupOptions(correct) {
+        const grid = document.getElementById('options'); grid.innerHTML = '';
+        let ch = [correct]; while(ch.length < 4) {
+            let wg = Math.floor(Math.random()*6)+2, wd = Math.floor(Math.random()*6)+2, opt = `${wg} × ${wd} = ${wg*wd}`;
+            if(!ch.includes(opt)) ch.push(opt);
+        }
+        ch.sort(()=>Math.random()-0.5).forEach(o => {
+            const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = o; btn.style.fontSize = '18px';
+            btn.onclick = () => checkAnswer(o, btn); grid.appendChild(btn);
         });
     }
 
     function checkAnswer(selected, btn) {
-        if (!canClick) return;
-        canClick = false;
+        if (!canClick) return; canClick = false;
+        let isCorr = (mathType==='groups') ? (selected === correctAnswer) :
+                     (mathType==='fractions' || mathType==='numberline') ? (selected.n === correctAnswer.n && selected.d === correctAnswer.d) :
+                     (selected === correctAnswer);
         const resLabel = document.getElementById('result-text');
-        if (selected === correctAnswer) {
-            btn.classList.add('correct');
-            resLabel.innerHTML = "🌟 AWESOME!";
-            score++;
-            document.getElementById('score').innerText = score;
-            triggerRewards(score);
+        if (isCorr) {
+            btn.classList.add('correct'); resLabel.innerHTML = "🌟 AWESOME!";
+            score++; document.getElementById('score').innerText = score; triggerRewards(score);
         } else {
-            btn.classList.add('wrong');
-            resLabel.innerText = "Keep trying! It's:";
-            mistakes.push({q: currentQText, a: correctAnswer, wrong: selected});
-            document.querySelectorAll('.option-btn').forEach(b => {
-                if (parseInt(b.innerText) === correctAnswer) b.classList.add('correct');
-            });
+            btn.classList.add('wrong'); resLabel.innerHTML = "Keep trying! It's:";
+            mistakes.push({q: mathType==='groups'?correctAnswer:currentQText});
         }
         document.getElementById('card').classList.add('flipped');
-        
-        if (score === 100 && selected === correctAnswer) {
-            setTimeout(() => {
-                document.getElementById('winPage').style.display = 'flex';
-            }, 3500);
-        } else {
-            setTimeout(newQuestion, 2000);
-        }
-    }
-
-    function addToTrophyRow(emoji) {
-        if (!earnedRewards.has(emoji)) {
-            earnedRewards.add(emoji);
-            const row = document.getElementById('trophyRow');
-            const span = document.createElement('span');
-            span.className = 'trophy';
-            span.innerText = emoji;
-            row.appendChild(span);
-        }
+        if (score === 100 && isCorr) setTimeout(() => document.getElementById('winPage').style.display = 'flex', 3500);
+        else setTimeout(newQuestion, 2000);
     }
 
     function triggerRewards(s) {
         const r = {10:'🍦', 20:'🍌', 30:'🍪', 40:'🍒', 50:'🚀', 60:'✨', 70:'🦄', 80:'🍕', 90:'👻', 100:'💯'};
-        if (r[s]) {
-            launchRain(r[s], s === 100 ? 80 : 40);
-            addToTrophyRow(r[s]);
-        }
+        if (r[s]) { launchRain(r[s], s === 100 ? 80 : 40); if(!earnedRewards.has(r[s])) { earnedRewards.add(r[s]); const row = document.getElementById('trophyRow'); const span = document.createElement('span'); span.className = 'trophy'; span.innerText = r[s]; row.appendChild(span); } }
     }
 
     function launchRain(emoji, count) {
         for(let i=0; i<count; i++) {
-            const el = document.createElement('div');
-            el.className = 'reward-obj'; el.innerText = emoji;
-            el.style.left = Math.random() * 95 + 'vw';
-            el.style.animation = `rain ${Math.random()*2 + 2}s linear forwards`;
-            el.style.animationDelay = (Math.random() * 1.5) + 's';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 6000);
+            const el = document.createElement('div'); el.className = 'reward-obj'; el.innerText = emoji;
+            el.style.left = Math.random() * 95 + 'vw'; el.style.animation = `rain ${Math.random()*2+2}s linear forwards`;
+            document.body.appendChild(el); setTimeout(() => el.remove(), 6000);
         }
     }
     generateMath();
 </script>
-
 </body>
 </html>
